@@ -1,3 +1,6 @@
+0.04 Thu Nov 11 12:53:21 CST 2004
+ 
+  * Fix tests to run correctly on Win32.
 
 0.03 Wed Nov 10 21:30:59 CST 2004
 

@@ -6,7 +6,7 @@ use Test::More qw/no_plan/;
 use File::Spec;
 
 my $tmp = File::Spec->tmpdir;
-my $file = File::Spec->catfile($tmp, 'FooBar.pm');
+my $file = $tmp."/".'FooBar.pm';
 push @INC, $tmp;
 
 write_out(<<".");
