@@ -18,7 +18,7 @@ BEGIN {$^P |= 0x10};
     # Acme::Current from CPAN. Use this snippet to make your running
     # program pick it up off disk:
 
-    $refresher->refresh_module('Apache::Current');
+    $refresher->refresh_module('Acme::Current');
 
 =head1 DESCRIPTION
 
