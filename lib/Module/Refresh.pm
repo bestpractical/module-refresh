@@ -131,10 +131,14 @@ sub cleanup_subs {
     my $file = shift;
 
     # Find all the entries in %DB::sub whose keys match "$file:" and wack em
-    foreach my $sym ( grep { $DB::sub{$_} =~ qr{^\Q$file:\E} } keys %DB::sub ) {
-       warn $sym;
-        undef &{$sym};
+    foreach my $sym (
+        grep { index( $DB::sub{$_}, "$file:" ) == 0 } keys %DB::sub
+    ) {
+        undef &$sym;
+        delete $DB::sub{$sym};
     }
+
+    return ($self);
 }
 
 =head1 BUGS

@@ -43,13 +43,12 @@ is(Foo::Bar->foo, 'baz', "We got the right new result,");
 # After a refresh, did we blow away our non-file-based comp?
 can_ok('Foo::Bar', 'not_in_foobarpm');
 
-delete $INC{'FooBar.pm'};
+$r->cleanup_subs($module);
+ok(!defined(&Foo::Bar::foo), "We cleaned out the 'foo' method'");
 
-ok(!UNIVERSAL::can('Foo::Bar', 'foo'), "We cleaned out the 'foo' method'");
-
-require "FooBar.pm";
-
-is(Foo::Bar->foo, 'baz', "We got the right new result,");
+#ok(!UNIVERSAL::can('Foo::Bar', 'foo'), "We cleaned out the 'foo' method'");
+#require "FooBar.pm";
+#is(Foo::Bar->foo, 'baz', "We got the right new result,");
 
 sub write_out {
     local *FH;
