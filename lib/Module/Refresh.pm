@@ -5,6 +5,9 @@ use vars qw( $VERSION %CACHE );
 
 $VERSION = 0.01;
 
+# Turn on the debugger's symbol source tracing
+BEGIN {$^P |= 0x10};
+
 =head1 SYNOPSIS
 
     my $refresher = Module::Refresh->new();
@@ -88,8 +91,10 @@ sub refresh_module {
 sub unload_module {
     my $self = shift;
     my $file = shift;
+    my $path =  $INC{$file};
     delete $INC{$file};
     delete $CACHE{$file};
+    $self->cleanup_subs($path);
     return ($self);
 }
 
@@ -118,16 +123,19 @@ sub mtime {
 
 Wipe out  subs defined in $file.
 
-
 =cut
 
 
 sub cleanup_subs {
-
     my $self = shift;
     my $file = shift;
-}
 
+    # Find all the entries in %DB::sub whose keys match "$file:" and wack em
+    foreach my $sym ( grep { $DB::sub{$_} =~ qr{^\Q$file:\E} } keys %DB::sub ) {
+       warn $sym;
+        undef &{$sym};
+    }
+}
 
 =head1 BUGS
 

@@ -40,6 +40,9 @@ require "FooBar.pm";
 
 is(Foo::Bar->foo, 'baz', "We got the right new result,");
 
+use YAML;
+YAML::Dump (\%DB::sub);
+
 
 
 package Foo::Bar;
