@@ -6,7 +6,7 @@ use Test::More qw/no_plan/;
 use File::Spec;
 
 my $tmp = File::Spec->tmpdir;
-my $module = File::Spec->catfile($tmp, 'FooBar.pm');
+my $file = File::Spec->catfile($tmp, 'FooBar.pm');
 push @INC, $tmp;
 
 write_out(<<".");
@@ -36,14 +36,14 @@ sub foo { 'baz' }
 
 is(Foo::Bar->foo, 'bar', "We got the right result, still");
 
-$r->refresh_updated;
+$r->refresh;
 
 is(Foo::Bar->foo, 'baz', "We got the right new result,");
 
 # After a refresh, did we blow away our non-file-based comp?
 can_ok('Foo::Bar', 'not_in_foobarpm');
 
-$r->cleanup_subs($module);
+$r->unload_subs($file);
 ok(!defined(&Foo::Bar::foo), "We cleaned out the 'foo' method'");
 
 #ok(!UNIVERSAL::can('Foo::Bar', 'foo'), "We cleaned out the 'foo' method'");
@@ -52,7 +52,7 @@ ok(!defined(&Foo::Bar::foo), "We cleaned out the 'foo' method'");
 
 sub write_out {
     local *FH;
-    open FH, "> $module" or die "Cannot open $module: $!";
+    open FH, "> $file" or die "Cannot open $file: $!";
     print FH $_[0];
     close FH;
 }
