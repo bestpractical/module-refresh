@@ -143,10 +143,8 @@ sub cleanup_subs {
 
 =head1 BUGS
 
-The module warns for each reloaded subroutine.  We _could_ 
-(and probably _should_) walk the symbol table and whack 
-the old versions of the symbols
-
+When we walk the symbol table to whack reloaded subroutines, we don't have a good way
+to invalidate the symbol table.
 
 =head1 AUTHOR
 
