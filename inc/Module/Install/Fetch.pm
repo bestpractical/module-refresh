@@ -1,4 +1,4 @@
-#line 1 "inc/Module/Install/Fetch.pm - /opt/perl-5.8.5/lib/site_perl/5.8.5/Module/Install/Fetch.pm"
+#line 1 "inc/Module/Install/Fetch.pm - /Library/Perl/5.8.1/Module/Install/Fetch.pm"
 package Module::Install::Fetch;
 use Module::Install::Base; @ISA = qw(Module::Install::Base);
 

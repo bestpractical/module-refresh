@@ -3,6 +3,8 @@ use strict;
 
 package Module::Refresh;
 
+our $VERSION = '0.01';
+
 our %CACHE;
 
 =head1 DESCRIPTION
@@ -123,6 +125,20 @@ sub mtime {
     my $filename = shift;
     return ( stat($filename) )[9];
 }
+
+=head1 BUGS
+
+The module warns for each reloaded subroutine.  We _could_ 
+(and probably _should_) walk the symbol table and whack 
+the old versions of the symbols
+
+
+=head1 AUTHOR
+
+Jesse Vincent <jesse@bestpractical.com>
+
+8 November, 2004, Hua Lien, Taiwan
+
 
 =head1 SEE ALSO
 
