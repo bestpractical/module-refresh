@@ -1,3 +1,7 @@
+0.02 Wed Nov 10 18:28:12 CST 2004
+
+    - Now we clean out subroutines loaded by the package we're unloading. 
+
 0.01 Mon Nov  8 19:48:00 CST 2004
 
     - Initial release
