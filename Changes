@@ -1,3 +1,15 @@
+
+0.03 Wed Nov 10 21:30:59 CST 2004
+
+  * "Anonymize" all our methods so we can refresh ourselves.
+  * POD cleanup; nomenclature unification.
+  * ->refresh now implicitly calls ->new for the first time.
+  
+   minor doc updates
+  
+  * Various cleanups to make it 5.005-friendly.
+  * Use (inode, size, mtime) as the cache value instead of mtime alone.
+  
 0.02 Wed Nov 10 18:28:12 CST 2004
 
     - Now we clean out subroutines loaded by the package we're unloading. 

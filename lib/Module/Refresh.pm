@@ -3,7 +3,7 @@ package Module::Refresh;
 use strict;
 use vars qw( $VERSION %CACHE );
 
-$VERSION = "0.02";
+$VERSION = "0.03";
 
 # Turn on the debugger's symbol source tracing
 BEGIN { $^P |= 0x10 };
