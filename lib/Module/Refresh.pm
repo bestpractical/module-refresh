@@ -1,28 +1,25 @@
-use warnings;
-use strict;
-
 package Module::Refresh;
 
-our $VERSION = '0.01';
+use strict;
+use vars qw( $VERSION %CACHE );
 
-our %CACHE;
+$VERSION = 0.01;
+
+=head1 SYNOPSIS
+
+    my $refresher = Module::Refresh->new();
+
+    $refresher->refresh_updated();
+
+    # each night at midnight, you automatically download the latest
+    # Acme::Current from CPAN. Use this snippet to make your running
+    # program pick it up off disk:
+
+    $refresher->refresh_module('Apache::Current');
 
 =head1 DESCRIPTION
 
 This module is a generalization of the functionality provided by Apache::StatINC. It's designed to make it easy to do simple iterative development when working in a persistent environment.  To that end
-
-=head1 EXAMPLE
-
-
-my $refresher = Inc::Refresh->new();
-
-$refresher->refresh_updated();
-
-# each night at midnight, you automatically download the latest
-# Acme::Current from CPAN. Use this snippet to make your running
-# program pick it up off disk:
-
-$refresher->refresh_module('Apache::Current');
 
 =cut
 
@@ -34,28 +31,21 @@ Initialize the module refresher;
 
 sub new {
     my $proto = shift;
-    my $class = ref($proto) || $proto;
-
-    my $self = {};
-    bless $self, $class;
-
-    $self->_initialize_cache();
-    return ($self);
+    my $self = ref($proto) || $proto;
+    $self->initialize;
+    return $self;
 }
 
-=head2 _initialize_cache
+=head2 initialize
 
-When we start up, set the mtime of each module to I<now>, so we don't go about refreshing
-   and refreshing everything.
+When we start up, set the mtime of each module to I<now>, so we don't go about
+refreshing and refreshing everything.
 
 =cut
 
-sub _initialize_cache {
+sub initialize {
     my $self = shift;
-    my $time = time();
-
-    $CACHE{$_} = $time for ( keys %INC );
-
+    $CACHE{$_} = $self->mtime($INC{$_}) for ( keys %INC );
     return ($self);
 }
 
@@ -67,8 +57,8 @@ refresh all modules that have mtimes on disk newer than the newest ones we've go
 
 sub refresh_updated {
     my $self = shift;
-    while ( my ( $mod, $path ) = each %INC ) {
-        if ( !$CACHE{$mod} || $self->mtime($path) > $CACHE{$mod} ) {
+    foreach my $mod (sort keys %INC) {
+        if ( !$CACHE{$mod} or ( $self->mtime($INC{$mod}) ne $CACHE{$mod} ) ) {
             $self->refresh_module($mod);
         }
     }
@@ -87,10 +77,9 @@ sub refresh_module {
 
     $self->unload_module($mod);
 
-        eval { 
-            require $mod 
-         };
-        warn $@ if ($@);
+    local $@;
+    eval { require $mod; 1 } or warn $@;
+
     $self->cache_mtime( $mod => $self->mtime( $INC{$mod} ) );
 
     return ($self);
@@ -98,10 +87,10 @@ sub refresh_module {
 
 sub unload_module {
     my $self = shift;
-    my $mod  = shift;
-    delete $INC{$mod};
-    $self->cache_mtime( $mod => 0 );
-
+    my $file = shift;
+    delete $INC{$file};
+    delete $CACHE{$file};
+    return ($self);
 }
 
 sub cache_mtime {
@@ -121,9 +110,7 @@ Get the last modified time of $file in seconds since the epoch;
 =cut
 
 sub mtime {
-    my $self     = shift;
-    my $filename = shift;
-    return ( stat($filename) )[9];
+    return join ' ', ( stat($_[1]) )[1, 7, 9];
 }
 
 
