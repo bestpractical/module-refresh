@@ -431,7 +431,7 @@ realclean_subdirs :
 realclean purge ::  clean realclean_subdirs
 	$(RM_RF) $(INST_AUTODIR) $(INST_ARCHAUTODIR)
 	$(RM_RF) $(DISTVNAME)
-	$(RM_F)  $(FIRST_MAKEFILE) $(MAKEFILE_OLD) blib/lib/Module/Refresh.pm
+	$(RM_F)  $(MAKEFILE_OLD) blib/lib/Module/Refresh.pm $(FIRST_MAKEFILE)
 
 
 # --- MakeMaker metafile section:

@@ -126,6 +126,22 @@ sub mtime {
     return ( stat($filename) )[9];
 }
 
+
+=head2 cleanup_subs filename
+
+Wipe out  subs defined in $file.
+
+
+=cut
+
+
+sub cleanup_subs {
+
+    my $self = shift;
+    my $file = shift;
+}
+
+
 =head1 BUGS
 
 The module warns for each reloaded subroutine.  We _could_ 
