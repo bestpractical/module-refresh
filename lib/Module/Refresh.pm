@@ -3,7 +3,7 @@ package Module::Refresh;
 use strict;
 use vars qw( $VERSION %CACHE );
 
-$VERSION = "0.04";
+$VERSION = "0.05";
 
 # Turn on the debugger's symbol source tracing
 BEGIN { $^P |= 0x10 };
@@ -140,10 +140,12 @@ sub unload_subs {
 BEGIN {
     no strict 'refs';
     foreach my $sym (sort keys %{__PACKAGE__.'::'}) {
+        next if $sym eq 'VERSION'; # Skip the version sub, inherited from UNIVERSAL
         my $code = __PACKAGE__->can($sym) or next;
         delete ${__PACKAGE__.'::'}{$sym};
         *$sym = sub { goto &$code };
     }
+
 }
 
 1;

@@ -1,3 +1,7 @@
+0.05 Tue Nov 16 23:15:10 EST 2004
+
+  * Explicitly, don't clobber the 'VERSION' symbol on setup.
+
 0.04 Thu Nov 11 12:53:21 CST 2004
  
   * Fix tests to run correctly on Win32.
