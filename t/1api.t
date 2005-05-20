@@ -17,14 +17,13 @@ sub foo { 'bar' }
 
 use_ok('Module::Refresh');
 
-my $r = Module::Refresh->new();
-
 use_ok('FooBar', "Required our dummy module");
+
+my $r = Module::Refresh->new();
 
 # is our non-file-based method available?
 
 can_ok('Foo::Bar', 'not_in_foobarpm');
-
 
 is(Foo::Bar->foo, 'bar', "We got the right result");
 

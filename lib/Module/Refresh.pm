@@ -41,7 +41,7 @@ Initialize the module refresher.
 sub new {
     my $proto = shift;
     my $self = ref($proto) || $proto;
-    $CACHE{$_} = $self->mtime($INC{$_}) for ( keys %INC );
+    $self->update_cache($_) for keys %INC;
     return ($self);
 };
 
@@ -49,6 +49,13 @@ sub new {
 
 Refresh all modules that have mtimes on disk newer than the newest ones we've got.
 Calls C<new> to initialize the cache if it had not yet been called.
+
+Specifically, it will renew any module that was loaded before the previous call
+to C<refresh> (or C<new>) and has changed on disk since then.  If a module was
+both loaded for the first time B<and> changed on disk between the previous call 
+and this one, it will B<not> be reloaded by this call (or any future one); you
+will need to update the modification time again (by using the Unix C<touch> command or
+making a change to it) in order for it to be reloaded.
 
 =cut
 
@@ -58,7 +65,9 @@ sub refresh {
     return $self->new if !%CACHE;
 
     foreach my $mod (sort keys %INC) {
-        if ( !$CACHE{$mod} or ( $self->mtime($INC{$mod}) ne $CACHE{$mod} ) ) {
+        if ( !$CACHE{$mod} ) {
+	    $self->update_cache($mod);
+	} elsif ( $self->mtime($INC{$mod}) ne $CACHE{$mod} ) {
             $self->refresh_module($mod);
         }
     }
@@ -82,7 +91,7 @@ sub refresh_module {
     local $@;
     eval { require $mod; 1 } or warn $@;
 
-    $CACHE{$mod} = $self->mtime( $INC{$mod} );
+    $self->update_cache($mod);
 
     return ($self);
 };
@@ -113,6 +122,19 @@ Get the last modified time of $file in seconds since the epoch;
 
 sub mtime {
     return join ' ', ( stat($_[1]) )[1, 7, 9];
+};
+
+=head2 update_cache $file
+
+Updates the cached "last modified" time for $file.
+
+=cut
+
+sub update_cache {
+    my $self = shift;
+    my $module_pm = shift;
+
+    $CACHE{$module_pm} = $self->mtime($INC{$module_pm});
 };
 
 =head2 unload_subs $file
