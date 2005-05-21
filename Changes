@@ -1,3 +1,10 @@
+0.06 Fri May 20 22:11:11 EDT 2005
+
+  * Trade overrefreshing for underrefreshing in some cases; test and document
+    (We were over-aggressively reloading modules
+     -- David Glasser
+
+
 0.05 Tue Nov 16 23:15:10 EST 2004
 
   * Explicitly, don't clobber the 'VERSION' symbol on setup.

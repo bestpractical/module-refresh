@@ -3,7 +3,7 @@ package Module::Refresh;
 use strict;
 use vars qw( $VERSION %CACHE );
 
-$VERSION = "0.05";
+$VERSION = "0.06";
 
 # Turn on the debugger's symbol source tracing
 BEGIN { $^P |= 0x10 };
@@ -150,6 +150,7 @@ sub unload_subs {
     foreach my $sym (
         grep { index( $DB::sub{$_}, "$file:" ) == 0 } keys %DB::sub
     ) {
+        warn "Deleting $sym from $file" if ($sym =~ /freeze/);
         undef &$sym;
         delete $DB::sub{$sym};
     }
