@@ -1,3 +1,7 @@
+0.07 Sun Aug 21 13:25:20 EDT 2005
+
+  * Put in a work-around for a perl bug before 5.8.7.
+
 0.06 Fri May 20 22:11:11 EDT 2005
 
   * Trade overrefreshing for underrefreshing in some cases; test and document
