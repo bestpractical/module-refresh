@@ -1,3 +1,15 @@
+0.08
+ * From Ivan Kohler.  (rt.cpan.org #14879)
+  Without this patch, I was getting a fatal error:
+   Can't undef active subroutine at /usr/share/perl5/Module/Refresh.pm line 154.
+
+   This patch changes this to a warning and adds the name of the subroutine that
+   triggered it.  I now get the non-fatal warning:
+
+     HTML::Mason::handler: Can't undef active subroutine at
+     /usr/share/perl5/Module/Refresh.pm line 154.
+
+
 0.07 Sun Aug 21 13:25:20 EDT 2005
 
   * Put in a work-around for a perl bug before 5.8.7.
