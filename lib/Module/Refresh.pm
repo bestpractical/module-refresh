@@ -34,8 +34,11 @@ Module::Refresh - Refresh %INC files when updated on disk
 =head1 DESCRIPTION
 
 This module is a generalization of the functionality provided by
-B<Apache::StatINC>.  It's designed to make it easy to do simple iterative
-development when working in a persistent environment.
+L<Apache::StatINC> and L<Apache::Reload>.  It's designed to make it
+easy to do simple iterative development when working in a persistent
+environment.
+
+It does not require mod_perl.
 
 =cut
 
