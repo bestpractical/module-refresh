@@ -3,7 +3,7 @@ package Module::Refresh;
 use strict;
 use vars qw( $VERSION %CACHE );
 
-$VERSION = "0.08";
+$VERSION = "0.09";
 
 BEGIN { 
     # Turn on the debugger's symbol source tracing
@@ -29,7 +29,7 @@ Module::Refresh - Refresh %INC files when updated on disk
     # Acme::Current from CPAN.  Use this snippet to make your running
     # program pick it up off disk:
 
-    $refresher->refresh_module('Acme::Current');
+    $refresher->refresh_module('Acme/Current.pm');
 
 =head1 DESCRIPTION
 
