@@ -3,9 +3,10 @@ package Module::Refresh;
 use strict;
 use vars qw( $VERSION %CACHE );
 
-$VERSION = "0.09";
+$VERSION = "0.10_01";
 
-BEGIN { 
+BEGIN {
+
     # Turn on the debugger's symbol source tracing
     $^P |= 0x10;
 
@@ -53,7 +54,7 @@ sub new {
     my $self = ref($proto) || $proto;
     $self->update_cache($_) for keys %INC;
     return ($self);
-};
+}
 
 =head2 refresh
 
@@ -74,15 +75,31 @@ sub refresh {
 
     return $self->new if !%CACHE;
 
-    foreach my $mod (sort keys %INC) {
-        if ( !$CACHE{$mod} ) {
-	    $self->update_cache($mod);
-	} elsif ( $self->mtime($INC{$mod}) ne $CACHE{$mod} ) {
-            $self->refresh_module($mod);
-        }
+    foreach my $mod ( sort keys %INC ) {
+        $self->refresh_module_if_modified($mod);
     }
     return ($self);
-};
+}
+
+=head2 refresh_module_if_modified $module
+
+If $module has been modified on disk, refresh it. Otherwise, do nothing
+
+
+=cut
+
+sub refresh_module_if_modified {
+    my $self = shift;
+    return $self->new if !%CACHE;
+    my $mod = shift;
+
+    if ( !$CACHE{$mod} ) {
+        $self->update_cache($mod);
+    } elsif ( $self->mtime( $INC{$mod} ) ne $CACHE{$mod} ) {
+        $self->refresh_module($mod);
+    }
+
+}
 
 =head2 refresh_module $module
 
@@ -104,7 +121,7 @@ sub refresh_module {
     $self->update_cache($mod);
 
     return ($self);
-};
+}
 
 =head2 unload_module $module
 
@@ -122,7 +139,7 @@ sub unload_module {
     $self->unload_subs($file);
 
     return ($self);
-};
+}
 
 =head2 mtime $file
 
@@ -131,8 +148,8 @@ Get the last modified time of $file in seconds since the epoch;
 =cut
 
 sub mtime {
-    return join ' ', ( stat($_[1]) )[1, 7, 9];
-};
+    return join ' ', ( stat( $_[1] ) )[ 1, 7, 9 ];
+}
 
 =head2 update_cache $file
 
@@ -141,11 +158,11 @@ Updates the cached "last modified" time for $file.
 =cut
 
 sub update_cache {
-    my $self = shift;
+    my $self      = shift;
     my $module_pm = shift;
 
-    $CACHE{$module_pm} = $self->mtime($INC{$module_pm});
-};
+    $CACHE{$module_pm} = $self->mtime( $INC{$module_pm} );
+}
 
 =head2 unload_subs $file
 
@@ -157,26 +174,28 @@ sub unload_subs {
     my $self = shift;
     my $file = shift;
 
-    foreach my $sym (
-        grep { index( $DB::sub{$_}, "$file:" ) == 0 } keys %DB::sub
-    ) {
-        warn "Deleting $sym from $file" if ($sym =~ /freeze/);
+    foreach my $sym ( grep { index( $DB::sub{$_}, "$file:" ) == 0 }
+        keys %DB::sub )
+    {
+        warn "Deleting $sym from $file" if ( $sym =~ /freeze/ );
         eval { undef &$sym };
         warn "$sym: $@" if $@;
         delete $DB::sub{$sym};
     }
 
     return $self;
-};
+}
 
 # "Anonymize" all our subroutines into unnamed closures; so we can safely
 # refresh this very package.
 BEGIN {
     no strict 'refs';
-    foreach my $sym (sort keys %{__PACKAGE__.'::'}) {
-        next if $sym eq 'VERSION'; # Skip the version sub, inherited from UNIVERSAL
+    foreach my $sym ( sort keys %{ __PACKAGE__ . '::' } ) {
+        next
+            if $sym eq
+            'VERSION';    # Skip the version sub, inherited from UNIVERSAL
         my $code = __PACKAGE__->can($sym) or next;
-        delete ${__PACKAGE__.'::'}{$sym};
+        delete ${ __PACKAGE__ . '::' }{$sym};
         *$sym = sub { goto &$code };
     }
 
@@ -204,3 +223,4 @@ modify it under the same terms as Perl itself.
 See L<http://www.perl.com/perl/misc/Artistic.html>
 
 =cut
+

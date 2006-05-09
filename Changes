@@ -1,3 +1,8 @@
+0.10_01 Tue May  9 01:21:55 EDT 2006
+
+* Module::Refresh->refresh_module_if_modified($module) 
+    as suggested by Daisuke Maki
+
 0.09 Thu Dec 22 19:03:14 EST 2005
 
 * Artur Bergman pointed out a bug in the overview docs.
