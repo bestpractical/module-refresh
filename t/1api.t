@@ -56,6 +56,10 @@ sub write_out {
     close FH;
 }
 
+END {
+    unlink $file;
+}
+
 
 package Foo::Bar;
 

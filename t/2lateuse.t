@@ -38,4 +38,8 @@ sub write_out {
     close FH;
 }
 
+END {
+    unlink $file;
+}
+
 1;
