@@ -6,9 +6,9 @@ package FOOBAR;
 
 use Test::More qw/no_plan/; 
 # can't really have a plan, since we're hoping the test will not be called
-use File::Spec;
+use File::Temp 'tempdir';
+my $tmp  = tempdir( CLEANUP => 1 );
 
-my $tmp = File::Spec->tmpdir;
 my $file = $tmp."/".'BeepBeep.pm';
 push @INC, $tmp;
 
