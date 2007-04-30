@@ -3,7 +3,7 @@ package Module::Refresh;
 use strict;
 use vars qw( $VERSION %CACHE );
 
-$VERSION = "0.11";
+$VERSION = "0.12";
 
 BEGIN {
 
