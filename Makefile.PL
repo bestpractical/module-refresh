@@ -1,5 +1,5 @@
 use inc::Module::Install;
-requires( perl => '5.6.1');
+requires( perl => '5.8.1');
 name('Module-Refresh');
 author('Jesse Vincent <jesse@bestpractical.com>');
 license('perl');
