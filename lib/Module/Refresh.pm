@@ -177,10 +177,16 @@ sub unload_subs {
     foreach my $sym ( grep { index( $DB::sub{$_}, "$file:" ) == 0 }
         keys %DB::sub )
     {
+
         warn "Deleting $sym from $file" if ( $sym =~ /freeze/ );
         eval { undef &$sym };
         warn "$sym: $@" if $@;
         delete $DB::sub{$sym};
+        { no strict 'refs';
+            if ($sym =~ /^(.*::)(.*?)$/) {
+                delete *{$1}->{$2};
+            }
+        } 
     }
 
     return $self;
@@ -205,8 +211,9 @@ BEGIN {
 
 =head1 BUGS
 
-When we walk the symbol table to whack reloaded subroutines, we don't have a good way
-to invalidate the symbol table.
+When we walk the symbol table to whack reloaded subroutines, we don't
+have a good way to invalidate the symbol table properly, so we mess up
+on things like global variables that were previously set.
 
 =head1 SEE ALSO
 
@@ -214,8 +221,8 @@ L<Apache::StatINC>, L<Module::Reload>
 
 =head1 COPYRIGHT
 
-Copyright 2004 by Jesse Vincent E<lt>jesse@bestpractical.comE<gt>,
-Autrijus Tang E<lt>autrijus@autrijus.orgE<gt>
+Copyright 2004,2011 by Jesse Vincent E<lt>jesse@bestpractical.comE<gt>,
+Audrey Tang E<lt>audreyt@audreyt.orgE<gt>
 
 This program is free software; you can redistribute it and/or 
 modify it under the same terms as Perl itself.
