@@ -6,6 +6,7 @@ license('perl');
 version_from('lib/Module/Refresh.pm');
 abstract_from('lib/Module/Refresh.pm');
 build_requires ('Test::More' => 0,
-                'File::Temp' => 0,
+                'Path::Class' => 0,
+                'File::Temp' => "0.19",
                 );
 &WriteAll;
