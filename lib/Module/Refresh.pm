@@ -93,7 +93,9 @@ sub refresh_module_if_modified {
     return $self->new if !%CACHE;
     my $mod = shift;
 
-    if ( !$CACHE{$mod} ) {
+    if (!$INC{$mod}) {
+        return;
+    } elsif ( !$CACHE{$mod} ) {
         $self->update_cache($mod);
     } elsif ( $self->mtime( $INC{$mod} ) ne $CACHE{$mod} ) {
         $self->refresh_module($mod);
