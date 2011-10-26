@@ -1,54 +1,83 @@
-#line 1 "inc/Module/Install/Base.pm - /Library/Perl/5.8.1/Module/Install/Base.pm"
+#line 1
 package Module::Install::Base;
 
-#line 28
+use strict 'vars';
+use vars qw{$VERSION};
+BEGIN {
+	$VERSION = '1.01';
+}
+
+# Suspend handler for "redefined" warnings
+BEGIN {
+	my $w = $SIG{__WARN__};
+	$SIG{__WARN__} = sub { $w };
+}
+
+#line 42
 
 sub new {
-    my ($class, %args) = @_;
-
-    foreach my $method (qw(call load)) {
-        *{"$class\::$method"} = sub {
-            +shift->_top->$method(@_);
-        } unless defined &{"$class\::$method"};
-    }
-
-    bless(\%args, $class);
+	my $class = shift;
+	unless ( defined &{"${class}::call"} ) {
+		*{"${class}::call"} = sub { shift->_top->call(@_) };
+	}
+	unless ( defined &{"${class}::load"} ) {
+		*{"${class}::load"} = sub { shift->_top->load(@_) };
+	}
+	bless { @_ }, $class;
 }
 
-#line 46
+#line 61
 
 sub AUTOLOAD {
-    my $self = shift;
-    goto &{$self->_top->autoload};
+	local $@;
+	my $func = eval { shift->_top->autoload } or return;
+	goto &$func;
 }
 
-#line 57
+#line 75
 
-sub _top { $_[0]->{_top} }
+sub _top {
+	$_[0]->{_top};
+}
 
-#line 68
+#line 90
 
 sub admin {
-    my $self = shift;
-    $self->_top->{admin} or Module::Install::Base::FakeAdmin->new;
+	$_[0]->_top->{admin}
+	or
+	Module::Install::Base::FakeAdmin->new;
 }
 
+#line 106
+
 sub is_admin {
-    my $self = shift;
-    $self->admin->VERSION;
+	! $_[0]->admin->isa('Module::Install::Base::FakeAdmin');
 }
 
 sub DESTROY {}
 
 package Module::Install::Base::FakeAdmin;
 
-my $Fake;
-sub new { $Fake ||= bless(\@_, $_[0]) }
+use vars qw{$VERSION};
+BEGIN {
+	$VERSION = $Module::Install::Base::VERSION;
+}
+
+my $fake;
+
+sub new {
+	$fake ||= bless(\@_, $_[0]);
+}
+
 sub AUTOLOAD {}
+
 sub DESTROY {}
+
+# Restore warning handler
+BEGIN {
+	$SIG{__WARN__} = $SIG{__WARN__}->();
+}
 
 1;
 
-__END__
-
-#line 112
+#line 159

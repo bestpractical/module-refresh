@@ -1,5 +1,10 @@
+0.17 Wed Oct 26 08:34:17 EST 2011
+
+ * Warnings avoidance for reloading a module not in %INC
+ * Updated inc/ and META.yml
+
 0.16 Fri Apr 15 15:03:21 EST 2011
- 
+
  * SIGNATURE file bug
 
 0.15 Fri Apr 15 15:00:15 EST 2011

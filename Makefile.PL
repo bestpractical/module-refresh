@@ -9,4 +9,5 @@ build_requires ('Test::More' => 0,
                 'Path::Class' => 0,
                 'File::Temp' => "0.19",
                 );
+sign;
 &WriteAll;
