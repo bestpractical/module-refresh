@@ -94,13 +94,15 @@ sub refresh_module_if_modified {
     my $mod = shift;
 
     if (!$INC{$mod}) {
-        return;
+        return undef;
     } elsif ( !$CACHE{$mod} ) {
         $self->update_cache($mod);
     } elsif ( $self->mtime( $INC{$mod} ) ne $CACHE{$mod} ) {
         $self->refresh_module($mod);
+		return 1;
     }
 
+	return 0;
 }
 
 =head2 refresh_module $module
@@ -188,7 +190,7 @@ sub unload_subs {
             if ($sym =~ /^(.*::)(.*?)$/) {
                 delete *{$1}->{$2};
             }
-        } 
+        }
     }
 
     return $self;
