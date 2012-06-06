@@ -35,7 +35,9 @@ sub foo { 'baz' }
 
 is(Foo::Bar->foo, 'bar', "We got the right result, still");
 
-$r->refresh;
+my @refreshed = $r->refresh;
+
+is($refreshed[0], 'FooBar.pm', "we reloaded $file");
 
 is(Foo::Bar->foo, 'baz', "We got the right new result,");
 
