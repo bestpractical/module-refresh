@@ -68,6 +68,8 @@ and this one, it will B<not> be reloaded by this call (or any future one); you
 will need to update the modification time again (by using the Unix C<touch> command or
 making a change to it) in order for it to be reloaded.
 
+Returns the list of modules which were updated.
+
 =cut
 
 sub refresh {
@@ -75,16 +77,35 @@ sub refresh {
 
     return $self->new if !%CACHE;
 
+	my @ret;
+
     foreach my $mod ( sort keys %INC ) {
-        $self->refresh_module_if_modified($mod);
+		if ($self->refresh_module_if_modified($mod)) {
+			push(@ret, $mod);
+		}
     }
-    return ($self);
+    return @ret;
 }
 
 =head2 refresh_module_if_modified $module
 
 If $module has been modified on disk, refresh it. Otherwise, do nothing
 
+This function will indicate what work it has done with the following return
+values:
+
+=over 3
+
+=item undef
+Module is not in the %INC hash
+
+=item 0
+Module was not refreshed
+
+=item 1
+Module was refreshed
+
+=back
 
 =cut
 
@@ -94,13 +115,15 @@ sub refresh_module_if_modified {
     my $mod = shift;
 
     if (!$INC{$mod}) {
-        return;
+        return undef;
     } elsif ( !$CACHE{$mod} ) {
         $self->update_cache($mod);
     } elsif ( $self->mtime( $INC{$mod} ) ne $CACHE{$mod} ) {
         $self->refresh_module($mod);
+		return 1;
     }
 
+	return 0;
 }
 
 =head2 refresh_module $module
@@ -188,7 +211,7 @@ sub unload_subs {
             if ($sym =~ /^(.*::)(.*?)$/) {
                 delete *{$1}->{$2};
             }
-        } 
+        }
     }
 
     return $self;

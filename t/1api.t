@@ -35,9 +35,24 @@ sub foo { 'baz' }
 
 is(Foo::Bar->foo, 'bar', "We got the right result, still");
 
-$r->refresh;
+my @refreshed = $r->refresh;
+
+is($refreshed[0], 'FooBar.pm', "we reloaded $file");
 
 is(Foo::Bar->foo, 'baz', "We got the right new result,");
+
+# mtime resolution is seconds so sleep 1 here to ensure mtime changes
+sleep(1);
+system('touch', $file);
+
+my $result = $r->refresh_module_if_modified('FooBar.pm');
+is($result, 1, 'FooBar was refreshed');
+
+$result = $r->refresh_module_if_modified('FooBar.pm');
+is($result, 0, 'FooBar was not refreshed');
+
+$result = $r->refresh_module_if_modified('FooBaz.pm');
+is($result, undef, 'FooBaz was never loaded');
 
 # After a refresh, did we blow away our non-file-based comp?
 can_ok('Foo::Bar', 'not_in_foobarpm');
