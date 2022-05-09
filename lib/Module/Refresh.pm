@@ -163,6 +163,9 @@ sub update_cache {
     my $self      = shift;
     my $module_pm = shift;
 
+    # In case the module was not loaded successfully.
+    return unless defined $INC{$module_pm};
+
     $CACHE{$module_pm} = $self->mtime( $INC{$module_pm} );
 }
 
